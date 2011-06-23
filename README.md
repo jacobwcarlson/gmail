@@ -4,14 +4,18 @@ A Rubyesque interface to Google's GMail, with all the tools you'll need. Search,
 read and send multipart emails, archive, mark as read/unread, delete emails, 
 and manage labels.
 
+This is a fork from Kriss 'nu7hatch' Kowalik's gem that just adds 
+batched envelope reads.
+
 It's based on Daniel Parker's ruby-gmail gem. This version has more friendy
 API, is well tested, better documented and have many other improvements.  
 
 ## Author(s)
 
+* Jacob Carlson
 * Kriss 'nu7hatch' Kowalik
 * [Daniel Parker of BehindLogic.com](http://github.com/dcparker)
-
+ 
 Extra thanks for specific feature contributions from:
 
 * [abhishiv](http://github.com/abhishiv)
