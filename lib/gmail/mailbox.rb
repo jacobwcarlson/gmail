@@ -25,6 +25,42 @@ module Gmail
       @gmail = gmail
     end
 
+    # Pull back the envelopes of all messages in a mailbox in an array.
+    # This uses only 1 IMAP request, making it much faster than
+    # using the email method.
+    def envelopes(*args, &block)
+      args << :all if args.size == 0
+
+      if args.first.is_a?(Symbol) 
+        search = MAILBOX_ALIASES[args.shift].dup
+        opts = args.first.is_a?(Hash) ? args.first : {}
+        
+        opts[:after] and search.concat ['SINCE', opts[:after].to_imap_date]
+        opts[:before] and search.concat ['BEFORE', opts[:before].to_imap_date]
+        opts[:on] and search.concat ['ON', opts[:on].to_imap_date]
+        opts[:from] and search.concat ['FROM', opts[:from]]
+        opts[:to] and search.concat ['TO', opts[:to]]
+        opts[:subject] and search.concat ['SUBJECT', opts[:subject]]
+        opts[:label] and search.concat ['LABEL', opts[:label]]
+        opts[:attachment] and search.concat ['HAS', 'attachment']
+        opts[:search] and search.concat ['BODY', opts[:search]]
+        opts[:body] and search.concat ['BODY', opts[:body]]
+        opts[:query] and search.concat opts[:query]
+
+        @gmail.mailbox(name) do
+          msg_ids = @gmail.conn.uid_search(search)
+          return [] if msg_ids.empty?
+          return @gmail.conn.uid_fetch(msg_ids, "ENVELOPE").collect do |data|
+            data.attr["ENVELOPE"]
+          end
+        end
+      elsif args.first.is_a?(Hash)
+        emails(:all, args.first)
+      else
+        raise ArgumentError, "Invalid search criteria"
+      end
+    end
+
     # Returns list of emails which meets given criteria. 
     #
     # ==== Examples
@@ -47,17 +83,17 @@ module Gmail
         search = MAILBOX_ALIASES[args.shift].dup
         opts = args.first.is_a?(Hash) ? args.first : {}
         
-        opts[:after]      and search.concat ['SINCE', opts[:after].to_imap_date]
-        opts[:before]     and search.concat ['BEFORE', opts[:before].to_imap_date]
-        opts[:on]         and search.concat ['ON', opts[:on].to_imap_date]
-        opts[:from]       and search.concat ['FROM', opts[:from]]
-        opts[:to]         and search.concat ['TO', opts[:to]]
-        opts[:subject]    and search.concat ['SUBJECT', opts[:subject]]
-        opts[:label]      and search.concat ['LABEL', opts[:label]]
+        opts[:after] and search.concat ['SINCE', opts[:after].to_imap_date]
+        opts[:before] and search.concat ['BEFORE', opts[:before].to_imap_date]
+        opts[:on] and search.concat ['ON', opts[:on].to_imap_date]
+        opts[:from] and search.concat ['FROM', opts[:from]]
+        opts[:to] and search.concat ['TO', opts[:to]]
+        opts[:subject] and search.concat ['SUBJECT', opts[:subject]]
+        opts[:label] and search.concat ['LABEL', opts[:label]]
         opts[:attachment] and search.concat ['HAS', 'attachment']
-        opts[:search]     and search.concat ['BODY', opts[:search]]
-        opts[:body]       and search.concat ['BODY', opts[:body]]
-        opts[:query]      and search.concat opts[:query]
+        opts[:search] and search.concat ['BODY', opts[:search]]
+        opts[:body] and search.concat ['BODY', opts[:body]]
+        opts[:query] and search.concat opts[:query]
 
         @gmail.mailbox(name) do
           @gmail.conn.uid_search(search).collect do |uid| 
@@ -77,9 +113,9 @@ module Gmail
     alias :find :emails
     alias :filter :emails
 
-    # This is a convenience method that really probably shouldn't need to exist, 
-    # but it does make code more readable, if seriously all you want is the count 
-    # of messages.
+    # This is a convenience method that really probably shouldn't need to
+    # exist, but it does make code more readable, if seriously all you want
+    # is the count of messages.
     #
     # ==== Examples
     #
