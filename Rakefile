@@ -4,14 +4,6 @@ $:.unshift(File.expand_path('../lib', __FILE__))
 require 'gmail/version'
 
 begin
-  require 'ore/tasks'
-  Ore::Tasks.new
-rescue LoadError => e
-  STDERR.puts e.message
-  STDERR.puts "Run `gem install ore-tasks` to install 'ore/tasks'."
-end
-
-begin
   require 'rspec/core/rake_task'
   RSpec::Core::RakeTask.new(:spec)
 rescue LoadError

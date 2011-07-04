@@ -1,5 +1,8 @@
 # Gmail gem changelog
 
+## 0.4.2
+* Removed ore dependency that made installation more tedious than necessary.
+
 ## 0.4.1
 * Added mailbox#envelopes to pull back the envelopes of all messages in a mailbox in 1 request.
 
