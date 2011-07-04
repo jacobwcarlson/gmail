@@ -18,4 +18,5 @@ Gem::Specification.new do |s|
 
   s.add_runtime_dependency 'mime', ['>= 0.1']
   s.add_runtime_dependency 'mail', ['>= 2.2.1']
+  s.add_runtime_dependency 'gmail_xoauth', ['>= 0.3.0']
 end
