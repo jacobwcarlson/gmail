@@ -18,10 +18,6 @@ module Gmail
       end
 
       def login(raise_errors = true)
-        puts "Consumer key: #{consumer_key}"
-        puts "Consumer secret: #{consumer_secret}"
-        puts "Token: #{token}"
-        puts "Secret: #{secret}"
         @imap and @logged_in = (login = @imap.authenticate('XOAUTH', username,
           :consumer_key    => consumer_key,
           :consumer_secret => consumer_secret,
