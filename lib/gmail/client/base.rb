@@ -22,10 +22,11 @@ module Gmail
       end
       
       # Connect to gmail service. 
-      def connect(raise_errors=false)
-        @imap = Net::IMAP.new(GMAIL_IMAP_HOST, GMAIL_IMAP_PORT, true, nil, false)
+      def connect()
+        @imap = Net::IMAP.new(GMAIL_IMAP_HOST, GMAIL_IMAP_PORT, usessl = true,
+                              certs = nil, verify = false)
       rescue SocketError
-        raise_errors and raise ConnectionError, "Couldn't establish connection with GMail IMAP service"
+        raise ConnectionError, "Couldn't establish connection with GMail IMAP service"
       end
       
       # This version of connect will raise error on failure...
@@ -123,11 +124,11 @@ module Gmail
       #
       #   mail = gmail.compose { ... }
       #   gmail.deliver(mail)
-      def deliver(mail=nil, raise_errors=false, &block)
+      def deliver(mail=nil, &block)
         mail = compose(mail, &block) if block_given?
         mail.deliver!
       rescue Object => ex
-        raise_errors and raise DeliveryError, "Couldn't deliver email: #{ex.to_s}"
+        raise DeliveryError, "Couldn't deliver email: #{ex.to_s}"
       end
       
       # This version of deliver will raise error on failure...

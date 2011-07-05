@@ -1,5 +1,8 @@
 # Gmail gem changelog
 
+## 0.4.3
+* Removed exception swallowing.
+
 ## 0.4.2
 * Removed ore dependency that made installation more tedious than necessary.
 
