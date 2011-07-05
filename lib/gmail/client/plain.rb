@@ -8,7 +8,7 @@ module Gmail
         super(username, options)
       end
 
-      def login()
+      def login
         @imap and @logged_in = (login = @imap.login(username, password)) && login.name == 'OK'
       rescue Net::IMAP::NoResponseError
         raise AuthorizationError, "Couldn't login to given GMail account: #{username}"

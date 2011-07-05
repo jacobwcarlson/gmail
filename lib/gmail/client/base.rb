@@ -22,11 +22,9 @@ module Gmail
       end
       
       # Connect to gmail service. 
-      def connect()
+      def connect(raise_errors = true)
         @imap = Net::IMAP.new(GMAIL_IMAP_HOST, GMAIL_IMAP_PORT, usessl = true,
                               certs = nil, verify = false)
-      rescue SocketError
-        raise ConnectionError, "Couldn't establish connection with GMail IMAP service"
       end
       
       # This version of connect will raise error on failure...
