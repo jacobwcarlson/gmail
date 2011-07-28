@@ -2,7 +2,7 @@ module Gmail
   class Version #:nodoc:
     MAJOR  = 0
     MINOR  = 4
-    PATCH  = 4
+    PATCH  = 5
     STRING = [MAJOR, MINOR, PATCH].join('.')
   end # Version
   

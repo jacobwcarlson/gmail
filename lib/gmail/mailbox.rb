@@ -50,14 +50,32 @@ module Gmail
         @gmail.mailbox(name) do
           msg_ids = @gmail.conn.uid_search(search)
           return [] if msg_ids.empty?
-          return @gmail.conn.uid_fetch(msg_ids, "ENVELOPE").collect do |data|
-            data.attr["ENVELOPE"]
+          attrs = ["ENVELOPE", "X-GM-MSGID", "X-GM-THRID"]
+          return @gmail.conn.uid_fetch(msg_ids, attrs).collect do |data|
+            Envelope.new(:src => data.attr['ENVELOPE'],
+                         :gm_msg_id => data.attr['X-GM-MSGID'],
+                         :gm_thread_id => data.attr['X-GM-THRID'])
           end
         end
       elsif args.first.is_a?(Hash)
         emails(:all, args.first)
       else
         raise ArgumentError, "Invalid search criteria"
+      end
+    end
+
+    # Return the envelopes of all unread messages in the mailbox.
+    def unread(*args, &block)
+      @gmail.mailbox(name) do
+        msg_ids = @gmail.conn.uid_search('UNSEEN')
+        return [] if msg_ids.empty?
+
+        attrs = ["ENVELOPE", "X-GM-MSGID", "X-GM-THRID"]
+        return @gmail.conn.uid_fetch(msg_ids, attrs).collect do |data|
+          Envelope.new(:src => data.attr['ENVELOPE'],
+                       :gm_msg_id => data.attr['X-GM-MSGID'],
+                       :gm_thread_id => data.attr['X-GM-THRID'])
+        end
       end
     end
 
@@ -144,10 +162,14 @@ module Gmail
       name
     end
 
+    # Disabled 07.28.2011 because we want return just the envelopes,
+    # not the complete messages.
+=begin
     MAILBOX_ALIASES.each_key { |mailbox|
       define_method(mailbox) do |*args, &block|
         emails(mailbox, *args, &block)
       end
     }
+=end
   end # Message
 end # Gmail

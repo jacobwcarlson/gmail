@@ -1,5 +1,10 @@
 # Gmail gem changelog
 
+## 0.4.5
+* Added support for X-GM-MSGID and X-GM-THRID extensions (includes monkey path to Net::IMAP)
+* Added support for Mailbox#unread to return just the envelope
+* Mailbox#envelopes (and Mailbox#unread) now return an object called Envelope that's much easier to deal with than struct Net::IMAP::Envelope (and includes the X-GM-MSGID and X-GM-THRID attributes)
+
 ## 0.4.3
 * Removed exception swallowing.
 
