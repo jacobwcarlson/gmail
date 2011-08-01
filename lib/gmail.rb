@@ -69,13 +69,13 @@ module Gmail
     attr_accessor :mailbox, :name, :route, :host
 
     def initialize(args = {})
-      @mailbox = args[:mailbox]
-      @name = args[:name]
-      @route = args[:route]
-      @host = args[:host]
+      @mailbox = args[:src].mailbox
+      @name = args[:src].name
+      @route = args[:src].route
+      @host = args[:src].host
     end
 
-    def recipient_address 
+    def address 
       "#{@mailbox}@#{@host}"
     end
   end
@@ -87,16 +87,15 @@ module Gmail
     attr_accessor :gm_msg_id, :gm_thread_id
 
     def initialize(args={})
-      @sender = []
       @to = []
       @cc = []
       @bcc = []
 
       if args[:src]
-        args[:src].sender.to_a.each { |s| @sender.push Address.new(:src => s) }
         args[:src].to.to_a.each { |s| @to.push Address.new(:src => s) }
         args[:src].cc.to_a.each { |s| @cc.push Address.new(:src => s) }
         args[:src].bcc.to_a.each { |s| @bcc.push Address.new(:src => s) }
+        @sender = Address.new(:src => args[:src].sender.first)
         @subject = args[:src].subject
         @date = args[:src].date
         @in_reply_to = args[:src].in_reply_to
