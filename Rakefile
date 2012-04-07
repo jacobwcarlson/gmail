@@ -22,7 +22,7 @@ rescue LoadError
   STDERR.puts "Run `gem install metric_fu` to install Metric-Fu"
 end
 
-require 'rake/rdoctask'
+require 'rdoc/task'
 Rake::RDocTask.new do |rdoc|
   rdoc.rdoc_dir = 'rdoc'
   rdoc.title = "Gmail for Ruby #{Gmail.version}"
